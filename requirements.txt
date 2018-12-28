@@ -1,3 +1,7 @@
-Django>=2.1.2
-pytz>=2018.5
-django-bootstrap4
+flask
+jinja2
+flask-bootstrap
+flask-nav
+flask-sqlalchemy
+idstools
+pyclamd

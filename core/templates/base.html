@@ -1,0 +1,36 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block title %}PyCTI: {{ title }}{% endblock %}
+
+{% block navbar %}
+  {{nav.mynavbar.render()}}
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+      {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+          <div class="row">
+            <div class="col-md-12">
+              {{utils.flashed_messages(messages)}}
+            </div>
+           </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block mycontent %}(no content){% endblock %}
+    </div>
+
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-10 col-lg-offset-1 text-center">
+            <br>
+            <hr class="small">
+              <p class="text-muted">Copyright &copy; Hannes Kramml & Wolfgang Schneemann</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+{% endblock %}
