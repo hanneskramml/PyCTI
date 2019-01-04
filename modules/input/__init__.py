@@ -1,8 +1,17 @@
 from flask import Blueprint
-from importlib import import_module
-from core import app
 
 bp = Blueprint('input', __name__)
 
-for input_module in app.config['INPUT_MODULES']:
-    import_module('.' + input_module, __name__)
+class InputModule(object):
+
+    @classmethod
+    def get_events(cls, path):
+        raise NotImplementedError
+
+    @classmethod
+    def run_scan(cls, path):
+        raise NotImplementedError
+
+
+from modules.input import input_handler
+

@@ -13,7 +13,7 @@ bootstrap = Bootstrap(app)
 nav = Nav(app)
 
 from modules.input import bp as input_bp
-app.register_blueprint(input_bp)
+app.register_blueprint(input_bp, url_prefix='/input')
 
 from core import bom, navigation, routes
 db.create_all()
