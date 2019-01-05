@@ -1,10 +1,10 @@
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/utils.html" as utils %}
 
-{% block title %}PyCTI: {{ title }}{% endblock %}
+{% block title %}PyCTI: {% block mytitle %}(no title){% endblock %}{% endblock %}
 
 {% block navbar %}
-  {{nav.mynavbar.render()}}
+    {{nav.mynavbar.render()}}
 {% endblock %}
 
 {% block content %}

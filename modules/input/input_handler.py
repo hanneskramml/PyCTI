@@ -1,4 +1,4 @@
-from flask import render_template, flash
+from flask import flash, redirect, url_for
 from core import db
 from core.bom import CTI
 from modules.input import bp
@@ -17,4 +17,4 @@ def suricata(id):
     db.session.commit()
 
     flash("Events from SuricataIDS successfully loaded!")
-    return render_template('index.html')
+    return redirect(url_for('show_cti', id=cti.id))
