@@ -46,8 +46,9 @@ class NetworkEvent(Event):
     dest_port = db.Column(db.Integer)
     payload = db.Column(db.String)
     signature = db.Column(db.String)
+    reference = db.Column(db.String)
 
-    def __init__(self, source_module, timestamp=db.func.current_timestamp(), src_ip=None, dest_ip=None, protocol=None, src_port=None, dest_port=None, payload=None, signature=None):
+    def __init__(self, source_module, timestamp=db.func.current_timestamp(), src_ip=None, dest_ip=None, protocol=None, src_port=None, dest_port=None, payload=None, signature=None, reference=None):
         super(NetworkEvent, self).__init__(source_module, timestamp)
         self.src_ip = src_ip
         self.dest_ip = dest_ip
@@ -56,7 +57,7 @@ class NetworkEvent(Event):
         self.dest_port = dest_port
         self.payload = payload
         self.signature = signature
-
+        self.reference = reference
 
     def __repr__(self):
         return '<NetworkEvent {}>'.format(self.id)

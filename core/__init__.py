@@ -12,8 +12,16 @@ db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
 nav = Nav(app)
 
+from core import bom
+db.create_all()
+
+from .rule_manager import RuleManager
+rulemanager = RuleManager(rulepath=Config.YARA_RULE_PATH)
+
 from modules.input import bp as input_bp
 app.register_blueprint(input_bp, url_prefix='/input')
 
-from core import bom, navigation, routes
-db.create_all()
+from modules.classification import bp as classification_bp
+app.register_blueprint(classification_bp, url_prefix='/classify')
+
+from core import navigation, routes

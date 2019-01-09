@@ -8,4 +8,4 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(base_dir, 'db.sqlite3')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BOOTSTRAP_SERVE_LOCAL = True
-    INPUT_MODULES = ['suricata','clamav']
+    YARA_RULE_PATH = os.path.join(base_dir, 'rules')

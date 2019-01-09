@@ -5,3 +5,4 @@ flask-nav
 flask-sqlalchemy
 idstools
 pyclamd
+yara-python

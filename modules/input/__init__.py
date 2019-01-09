@@ -2,6 +2,7 @@ from flask import Blueprint
 
 bp = Blueprint('input', __name__)
 
+
 class InputModule(object):
 
     @classmethod
