@@ -24,4 +24,4 @@ app.register_blueprint(input_bp, url_prefix='/input')
 from modules.classification import bp as classification_bp
 app.register_blueprint(classification_bp, url_prefix='/classify')
 
-from core import navigation, routes
+from core import navigation, controller

@@ -10,7 +10,7 @@ class ClassificationModule(object):
         raise NotImplementedError
 
     @classmethod
-    def train_algorithm(cls, cti):
+    def train_algorithm(cls):
         raise NotImplementedError
 
 
