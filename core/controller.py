@@ -35,28 +35,34 @@ def show_cti(id):
 def analyse_events(id):
     cti = CTI.query.get_or_404(id)
 
+    stats_sw = 0
+    stats_tec = 0
+
     for event in cti.events:
+        str_obj = utils.get_dict_from_object(event).__str__()
+        matches = rulemanager.match_data(str_obj)
 
-        event_str = utils.get_dict_from_object(event).__str__()
-        sw_match = rulemanager.match_software(event_str)
-        tec_match = rulemanager.match_techniques(event_str)
-
-        for match in sw_match:
+        for match in matches:
             for feature in match.meta:
-                software = Software.query.filter_by(name=match.meta[feature]).first()
-                if software:
-                    event.analysed_software.append(software)
+                if "software" in feature:
+                    software = Software.query.filter_by(name=match.meta[feature]).first()
+                    if software:
+                        event.analysed_software.append(software)
+                        stats_sw += 1
 
-        for match in tec_match:
-            for feature in match.meta:
-                technique = Technique.query.filter_by(name=match.meta[feature]).first()
-                if technique:
-                    event.analysed_techniques.append(technique)
+                else:
+                    technique = Technique.query.filter_by(name=match.meta[feature]).first()
+                    if technique:
+                        event.analysed_techniques.append(technique)
+                        stats_tec += 1
+
+                db.session.add(event)
 
     cti.status = CTI_STATUS['ANALYSED']
     db.session.add(cti)
     db.session.commit()
 
-    flash("CTI Events analysed successfully!")
+    flash("{} CTI Event(s) analysed! Found {} Software match(es) and {} Technique match(es)."
+          .format(cti.events.__len__(), stats_sw, stats_tec))
 
     return redirect(url_for('show_cti', id=cti.id))
