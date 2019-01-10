@@ -1,12 +1,12 @@
 from core import db
 
 mtm_event_software = db.Table('mtm_event_software',
-                              db.Column('event_base.id', db.Integer, db.ForeignKey('event_base.id'), primary_key=True),
-                              db.Column('software.id', db.Integer, db.ForeignKey('software.id'), primary_key=True))
+                              db.Column('event_base_id', db.Integer, db.ForeignKey('event_base.id'), primary_key=True),
+                              db.Column('software_id', db.Integer, db.ForeignKey('software.id'), primary_key=True))
 
 mtm_event_behaviour = db.Table('mtm_event_behaviour',
-                              db.Column('event_base.id', db.Integer, db.ForeignKey('event_base.id'), primary_key=True),
-                              db.Column('behaviour.id', db.Integer, db.ForeignKey('behaviour.id'), primary_key=True))
+                              db.Column('event_base_id', db.Integer, db.ForeignKey('event_base.id'), primary_key=True),
+                              db.Column('behaviour_id', db.Integer, db.ForeignKey('behaviour.id'), primary_key=True))
 
 
 class Event(db.Model):

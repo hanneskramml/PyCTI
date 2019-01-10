@@ -66,3 +66,14 @@ def analyse_events(id):
           .format(cti.events.__len__(), stats_sw, stats_tec))
 
     return redirect(url_for('show_cti', id=cti.id))
+
+
+# @app.route('/cti/<id>/classify_features', methods=['POST'])
+@app.route('/cti/<id>/classify_features')
+def classify_features(id):
+    cti = CTI.query.get_or_404(id)
+
+    feat_vector = utils.vectorize_features(cti)
+    print(feat_vector)
+
+    return redirect(url_for('show_cti', id=cti.id))

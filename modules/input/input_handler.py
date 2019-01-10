@@ -16,5 +16,5 @@ def suricata(id):
     db.session.add(cti)
     db.session.commit()
 
-    flash("Events from SuricataIDS successfully loaded!")
+    flash("{} Events from SuricataIDS successfully loaded!".format(events.__len__()))
     return redirect(url_for('show_cti', id=cti.id))
