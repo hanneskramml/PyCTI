@@ -1,6 +1,6 @@
 from flask import flash, render_template, redirect, url_for
 from core import app, db, rulemanager, utils
-from core.bom import CTI, CTI_STATUS, Software, Technique
+from core.bom import CTI, CTI_STATUS, Software, Behaviour
 
 
 @app.route('/', methods=['GET'])
@@ -45,15 +45,15 @@ def analyse_events(id):
         for match in matches:
             for feature in match.meta:
                 if "software" in feature:
-                    software = Software.query.filter_by(name=match.meta[feature]).first()
+                    software = db.session.query(Software).filter_by(name=match.meta[feature]).first()
                     if software:
                         event.analysed_software.append(software)
                         stats_sw += 1
 
                 else:
-                    technique = Technique.query.filter_by(name=match.meta[feature]).first()
-                    if technique:
-                        event.analysed_techniques.append(technique)
+                    behaviour = db.session.query(Behaviour).filter_by(name=match.meta[feature]).first()
+                    if behaviour:
+                        event.analysed_behaviours.append(behaviour)
                         stats_tec += 1
 
                 db.session.add(event)
@@ -62,7 +62,7 @@ def analyse_events(id):
     db.session.add(cti)
     db.session.commit()
 
-    flash("{} CTI Event(s) analysed! Found {} Software match(es) and {} Technique match(es)."
+    flash("{} CTI Event(s) analysed! Found {} Software and {} behavioural match(es)."
           .format(cti.events.__len__(), stats_sw, stats_tec))
 
     return redirect(url_for('show_cti', id=cti.id))

@@ -1,0 +1,3 @@
+[submodule "repos/mitre"]
+	path = repos/mitre
+	url = https://github.com/mitre/cti.git

@@ -7,9 +7,9 @@ from core.bom import Software
 class RuleManager(object):
 
     def __init__(self, rulepath):
-        self.technique_rules, self.num_tec_rule = self.__load_rules(rulepath)
+        self.behaviour_rules, self.num_behaviour_rule = self.__load_rules(rulepath)
         self.software_rules, self.num_sw_rule = self.__generate_rules(Software.query.all())
-        print("YARA Rules loaded (Techniques: {}, Software: {})".format(self.num_tec_rule, self.num_sw_rule))
+        print("YARA Rules loaded (Behaviours: {}, Software: {})".format(self.num_behaviour_rule, self.num_sw_rule))
 
     @staticmethod
     def __load_rules(rulepath):
@@ -28,10 +28,10 @@ class RuleManager(object):
 
     def match_data(self, data):
         matches = self.software_rules.match(data=data)
-        matches += self.technique_rules.match(data=data)
+        matches += self.behaviour_rules.match(data=data)
         return matches
 
     def match_file(self, file):
         matches = self.software_rules.match(file=file)
-        matches += self.technique_rules.match(file=file)
+        matches += self.behaviour_rules.match(file=file)
         return matches

@@ -4,9 +4,9 @@ mtm_event_software = db.Table('mtm_event_software',
                               db.Column('event_base.id', db.Integer, db.ForeignKey('event_base.id'), primary_key=True),
                               db.Column('software.id', db.Integer, db.ForeignKey('software.id'), primary_key=True))
 
-mtm_event_technique = db.Table('mtm_event_technique',
+mtm_event_behaviour = db.Table('mtm_event_behaviour',
                               db.Column('event_base.id', db.Integer, db.ForeignKey('event_base.id'), primary_key=True),
-                              db.Column('technique.id', db.Integer, db.ForeignKey('technique.id'), primary_key=True))
+                              db.Column('behaviour.id', db.Integer, db.ForeignKey('behaviour.id'), primary_key=True))
 
 
 class Event(db.Model):
@@ -23,7 +23,7 @@ class Event(db.Model):
     cti_id = db.Column(db.Integer, db.ForeignKey('cti.id'), nullable=False)
 
     analysed_software = db.relationship('Software', secondary=mtm_event_software, backref=db.backref('events', lazy=True))
-    analysed_techniques = db.relationship('Technique', secondary=mtm_event_technique, backref=db.backref('events', lazy=True))
+    analysed_behaviours = db.relationship('Behaviour', secondary=mtm_event_behaviour, backref=db.backref('events', lazy=True))
 
     def __init__(self, source_module, timestamp=db.func.current_timestamp()):
         self.timestamp = timestamp

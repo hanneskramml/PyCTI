@@ -6,3 +6,4 @@ flask-sqlalchemy
 idstools
 pyclamd
 yara-python
+stix2

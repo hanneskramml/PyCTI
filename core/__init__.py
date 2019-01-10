@@ -13,7 +13,10 @@ bootstrap = Bootstrap(app)
 nav = Nav(app)
 
 from core import bom
-db.create_all()
+if Config.CREATE_DB_AND_INIT_BASELINE:
+    db.create_all()
+    from baseline_loader import MitreKnowledgeBase
+    MitreKnowledgeBase.load_baseline()
 
 from .rule_manager import RuleManager
 rulemanager = RuleManager(rulepath=Config.YARA_RULE_PATH)
