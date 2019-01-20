@@ -52,10 +52,16 @@ class MitreKnowledgeBase:
             if "aliases" in act:
                 actor.alias = json.dumps(act['aliases'])
 
+            if "description" in act:
+                actor.description = act.description
+
             db.session.add(actor)
 
         for tec in cls.__get_all_techniques():
-            behaviour = Behaviour(extId=tec.id, name=tec.name, description=tec.description)
+            behaviour = Behaviour(extId=tec.id, name=tec.name)
+
+            if "description" in tec:
+                behaviour.description = tec.description
 
             if "x_mitre_platforms" in tec:
                 behaviour.platforms = json.dumps(tec['x_mitre_platforms'])
@@ -65,6 +71,8 @@ class MitreKnowledgeBase:
         for sw in cls.__get_all_software():
             software = Software(extId=sw.id, name=sw.name, type=sw.type)
 
+            if "description" in sw:
+                software.description = sw.description
             if "x_mitre_aliases" in sw:
                 software.alias = json.dumps(sw['x_mitre_aliases'])
             if "x_mitre_platforms" in sw:
@@ -73,6 +81,7 @@ class MitreKnowledgeBase:
             db.session.add(software)
 
         for actor in Actor.query.all():
+            print("MITRE: Setting relationships for actor {}...".format(actor.name))
             for rel in cls.__find_relationships(source_id=actor.ext_id, rel_type='uses'):
                 type = get_type_from_id(rel.target_ref)
 

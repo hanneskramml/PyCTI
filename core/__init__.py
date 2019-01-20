@@ -21,6 +21,10 @@ if Config.CREATE_DB_AND_INIT_BASELINE:
 from .rule_manager import RuleManager
 rulemanager = RuleManager(rulepath=Config.YARA_RULE_PATH)
 
+from .training_data import TrainingSet
+ts = TrainingSet()
+ts.init_from_db()
+
 from modules.input import bp as input_bp
 app.register_blueprint(input_bp, url_prefix='/input')
 

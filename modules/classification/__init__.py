@@ -6,11 +6,11 @@ bp = Blueprint('classification', __name__)
 class ClassificationModule(object):
 
     @classmethod
-    def classify_features(cls, features):
+    def train_algorithm(cls, training_set):
         raise NotImplementedError
 
     @classmethod
-    def train_algorithm(cls, data):
+    def classify_features(cls, features):
         raise NotImplementedError
 
 
