@@ -1,12 +1,8 @@
 from core import db
 
-mtm_event_software = db.Table('mtm_event_software',
-                              db.Column('event_base_id', db.Integer, db.ForeignKey('event_base.id'), primary_key=True),
-                              db.Column('software_id', db.Integer, db.ForeignKey('software.id'), primary_key=True))
-
-mtm_event_behaviour = db.Table('mtm_event_behaviour',
-                              db.Column('event_base_id', db.Integer, db.ForeignKey('event_base.id'), primary_key=True),
-                              db.Column('behaviour_id', db.Integer, db.ForeignKey('behaviour.id'), primary_key=True))
+mtm_feature_event = db.Table('mtm_feature_event',
+                             db.Column('feature_id', db.Integer, db.ForeignKey('feature.id'), primary_key=True),
+                            db.Column('event_base_id', db.Integer, db.ForeignKey('event_base.id'), primary_key=True))
 
 
 class Event(db.Model):
@@ -19,11 +15,11 @@ class Event(db.Model):
     event_type = db.Column(db.String)
     __mapper_args__ = {'polymorphic_on': event_type}
 
-    cti = db.relationship("CTI", uselist=False)
+    cti = db.relationship("CTI", uselist=False, lazy=True)
     cti_id = db.Column(db.Integer, db.ForeignKey('cti.id'), nullable=False)
 
-    analysed_software = db.relationship('Software', secondary=mtm_event_software, backref=db.backref('events', lazy=True))
-    analysed_behaviours = db.relationship('Behaviour', secondary=mtm_event_behaviour, backref=db.backref('events', lazy=True))
+    analysed_features = db.relationship('Feature', secondary=mtm_feature_event,
+                                        backref=db.backref('events', lazy=True), lazy=True)
 
     def __init__(self, source_module, timestamp=db.func.current_timestamp()):
         self.timestamp = timestamp

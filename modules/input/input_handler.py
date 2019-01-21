@@ -5,9 +5,9 @@ from modules.input import bp
 from .suricata import SuricataIDS
 
 #@bp.route('/suricata/<id>', methods=['POST'])
-@bp.route('/suricata/<id>')
-def suricata(id):
-    cti = CTI.query.filter_by(id=id).first_or_404()
+@bp.route('/suricata/<ctiId>')
+def suricata(ctiId):
+    cti = CTI.query.filter_by(id=ctiId).first_or_404()
     events = SuricataIDS.get_events()
 
     for event in events:
