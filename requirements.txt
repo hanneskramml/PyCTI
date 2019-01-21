@@ -3,6 +3,7 @@ jinja2
 flask-bootstrap
 flask-nav
 flask-sqlalchemy
+flask-wtf
 idstools
 pyclamd
 yara-python

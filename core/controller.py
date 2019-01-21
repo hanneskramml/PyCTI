@@ -1,27 +1,56 @@
 from flask import flash, render_template, redirect, url_for
 from core import app, db, rulemanager, utils
 from core.bom import CTI, CTI_STATUS, Software, Behaviour
+from core.forms import AddForm, DeleteForm
 
 
 @app.route('/', methods=['GET'])
+@app.route('/index', methods=['GET'])
 def index():
 
     # TODO: Implement dashboard view
-    flash('Hello World!', 'info')
 
-    return render_template('index.html')
+    return render_template('index.html', title='PyCTI')
 
 
-# TODO: Implement modal form for CTI creation
+# TODO: Implement form for CTI creation
 # @app.route('/add_cti', methods=['POST'])
 @app.route('/add_cti', methods=['GET', 'POST'])
 def add_cti():
-    cti = CTI("TestCTI")
+    form = AddForm()
+    if form.validate_on_submit():
+        cti = CTI(str(form.name.data))
 
-    db.session.add(cti)
+        db.session.add(cti)
+        db.session.commit()
+
+        return redirect(url_for('show_cti', id=cti.id))
+
+    return render_template('add.html', form=form)
+
+
+@app.route('/delete_cti/<id>', methods=['GET'])
+def delete_cti(id):
+    form = DeleteForm()
+
+    return render_template('delete.html', cti=CTI.query.get_or_404(id), form=form)
+
+
+@app.route('/delete_cti/<id>/4ever', methods=['POST'])
+def delete_cti_4ever(id):
+    cti = CTI.query.get_or_404(id)
+
+    db.session.delete(cti)
     db.session.commit()
 
-    return redirect(url_for('show_cti', id=cti.id))
+    return redirect('cti_tab')
+
+
+@app.route('/cti_tab', methods=['GET'])
+def cti_tab():
+    ctiList = CTI.query.order_by(CTI.timestamp.desc()).all()
+
+    return render_template('cti_tab.html', ctiList=ctiList)
 
 
 @app.route('/cti/<id>', methods=['GET'])

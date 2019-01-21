@@ -1,9 +1,12 @@
 from flask_nav.elements import Navbar, View
 from core import nav
 
+
 @nav.navigation()
 def mynavbar():
     return Navbar(
         'PyCTI',
         View('Dashboard', 'index'),
+        View('CTI', 'cti_tab'),
+        View('New', 'add_cti'),
     )
