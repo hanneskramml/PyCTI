@@ -13,22 +13,44 @@
 {% endblock %}
 
 {% block mycontent %}
-    <div class="jumbotron">
-      <h1>{{cti.name}}</h1>
-    </div>
-
     <div class="container">
 	<div class="row">
+        <div class="col-sm-6">
+            <h2>CTI Overview  <span class="label label-default">{{ cti.get_status_name() }}</span></h2><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>Details</b></div>
+                <div class="panel-body">
+                    Id: {{ cti.id }}<br>
+                    Name: {{ cti.name }}<br>
+                    Created on: {{ cti.timestamp }}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>Statistics</b></div>
+                <div class="panel-body">
+                    Number of loaded events: {{ cti.events|length }}<br>
+                    Number of analysed features: {{ cti.features|length }}<br>
+                    Number of assigned classification(s): {{ cti.classifications|length }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
 		<section>
         <div class="wizard">
             <div class="wizard-inner">
-                <div class="connecting-line"></div>
                 <ul class="nav nav-tabs" role="tablist">
 
                     <li role="presentation" {% if cti.status == 0 %} class="active" {% elif cti.status < 0 %} class="disabled" {% else %} class {% endif %}>
                         <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Step 1">
                             <span class="round-tab">
-                                <i class="glyphicon glyphicon-folder-open"></i>
+                                <i class="glyphicon glyphicon-import"></i>
                             </span>
                         </a>
                     </li>
@@ -36,14 +58,14 @@
                     <li role="presentation" {% if cti.status == 1 %} class="active" {% elif cti.status < 1 %} class="disabled" {% else %} class {% endif %}>
                         <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Step 2">
                             <span class="round-tab">
-                                <i class="glyphicon glyphicon-pencil"></i>
+                                <i class="glyphicon glyphicon-dashboard"></i>
                             </span>
                         </a>
                     </li>
                     <li role="presentation" {% if cti.status == 2 %} class="active" {% elif cti.status < 2 %} class="disabled" {% else %} class {% endif %}>
                         <a href="#step3" data-toggle="tab" aria-controls="step3" role="tab" title="Step 3">
                             <span class="round-tab">
-                                <i class="glyphicon glyphicon-picture"></i>
+                                <i class="glyphicon glyphicon-tasks"></i>
                             </span>
                         </a>
                     </li>
@@ -61,19 +83,79 @@
             <form role="form">
                 <div class="tab-content">
                     <div class="tab-pane {% if cti.status == 0 %}active{% endif %}" role="tabpanel" id="step1">
-                        <h3>Step 1</h3>
-                        <p>This is step 1</p>
+                        <h3>Load data</h3>
+                        <p>Number of events: {{ cti.events|length }}</p>
+
                         <ul class="list-inline pull-right">
-                            <li><button type="button" class="btn btn-primary next-step">Save and continue</button></li>
+                            <li><button type="button" class="btn btn-primary next-step">Analyse events</button></li>
                         </ul>
                     </div>
                     <div class="tab-pane {% if cti.status == 1 %}active{% endif %}" role="tabpanel" id="step2">
-                        <h3>Step 2</h3>
-                        <p>This is step 2</p>
+                        <h3>Analysed features</h3>
+                        <p>Number of features: {{ cti.features|length }}</p>
+                        <br>
+                        <div class="col-sm-6">
+                            <h4>Behaviour(s)</h4>
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Featurename</th>
+                                        <th>Power</th>
+                                        <th>Related Events</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for feature in cti.features if feature.feat_type == 'behaviour' %}
+                                        <tr>
+                                            <td><a href="{{ url_for('index') }}">{{ feature.name }}</a></td>
+                                            <td>{{ feature.power }}</td>
+                                            <td>{{ feature.events|length }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-sm-6">
+                            <h4>Software</h4>
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Featurename</th>
+                                        <th>Type</th>
+                                        <th>Power</th>
+                                        <th>Related Events</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for feature in cti.features if feature.feat_type == 'software' %}
+                                        <tr>
+                                            <td><a href="{{ url_for('index') }}">{{ feature.name }}</a></td>
+                                            <td>{{ feature.type }}</td>
+                                            <td>{{ feature.power }}</td>
+                                            <td>{{ feature.events|length }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <form class="form-horizontal" action="{{ url_for('classification.classify_features', ctiId=cti.id, module='NeuronalNetwork') }}">
                         <ul class="list-inline pull-right">
+                            <li>
+                                <div class="form-group">
+                                    <label for="algorithm">Algorithm</label>
+                                    <select class="form-control" id="algorithm">
+                                        <option>DecisionTree</option>
+                                        <option>NeuronalNetwork</option>
+                                    </select>
+                                </div>
+                            </li>
+                            <li>
+                                <button type="submit" class="btn btn-primary">Classify features</button>
+                            </li>
                             <li><button type="button" class="btn btn-default prev-step">Previous</button></li>
-                            <li><button type="button" class="btn btn-primary next-step">Save and continue</button></li>
+                            <li><button type="button" class="btn btn-default next-step">Next</button></li>
                         </ul>
+                        </form>
                     </div>
                     <div class="tab-pane {% if cti.status == 2 %}active{% endif %}" role="tabpanel" id="step3">
                         <h3>Step 3</h3>
@@ -81,7 +163,7 @@
                         <ul class="list-inline pull-right">
                             <li><button type="button" class="btn btn-default prev-step">Previous</button></li>
                             <li><button type="button" class="btn btn-default next-step">Skip</button></li>
-                            <li><button type="button" class="btn btn-primary btn-info-full next-step">Save and continue</button></li>
+                            <li><button type="button" class="btn btn-primary btn-info-full next-step">Share CTI</button></li>
                         </ul>
                     </div>
                     <div class="tab-pane {% if cti.status == 3 %}active{% endif %}" role="tabpanel" id="complete">

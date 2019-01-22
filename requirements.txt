@@ -9,3 +9,4 @@ pyclamd
 yara-python
 stix2
 scikit-learn
+numpy

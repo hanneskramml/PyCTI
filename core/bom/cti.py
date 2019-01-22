@@ -23,6 +23,13 @@ class CTI(db.Model):
         self.name = name
         self.status = CTI_STATUS['NEW']
 
+    def get_status_name(self):
+        for key in CTI_STATUS:
+            if self.status == CTI_STATUS[key]:
+                return key
+
+        return None
+
     def __repr__(self):
         return '<CTI {}>'.format(self.id)
 

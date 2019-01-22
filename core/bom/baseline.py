@@ -44,7 +44,7 @@ class Feature(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ext_id = db.Column(db.String, unique=True)
-    name = db.Column(db.String, index=True)
+    name = db.Column(db.String, unique=True, index=True)
     description = db.Column(db.String)
     power = db.Column(db.Float)
 

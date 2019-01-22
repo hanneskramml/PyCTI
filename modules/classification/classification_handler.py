@@ -13,7 +13,7 @@ def classify_features(module, ctiId):
     feature_set = {feature.name: feature.power for feature in cti.features}
     feature_vect = ts.get_vector_from_features(feature_set)
 
-    print(feature_vect)
+    print(feature_set)
 
     if module == 'DecisionTree':
         targets, probs = DecisionTree.classify_features([feature_vect])

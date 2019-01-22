@@ -1,19 +1,18 @@
 from flask import flash, render_template, redirect, url_for
 from core import app, db, rulemanager, utils
 from core.bom import CTI, CTI_STATUS, Feature
-from core.forms import AddForm, DeleteForm
+from core.forms import AddForm
 
 
 @app.route('/', methods=['GET'])
-@app.route('/index', methods=['GET'])
 def index():
+    ctiList = CTI.query.order_by(CTI.timestamp.desc()).all()
 
     # TODO: Implement dashboard view
 
-    return render_template('index.html', title='PyCTI')
+    return render_template('index.html', ctiList=ctiList)
 
 
-# TODO: Implement form for CTI creation
 # @app.route('/add_cti', methods=['POST'])
 @app.route('/add_cti', methods=['GET', 'POST'])
 def add_cti():
@@ -29,26 +28,15 @@ def add_cti():
     return render_template('add.html', form=form)
 
 
-@app.route('/delete_cti/<id>', methods=['GET'])
+@app.route('/cti/<id>/delete', methods=['POST'])
 def delete_cti(id):
-    return render_template('delete.html', cti=CTI.query.get_or_404(id), form=DeleteForm())
-
-
-@app.route('/delete_cti/<id>/4ever', methods=['POST'])
-def delete_cti_4ever(id):
     cti = CTI.query.get_or_404(id)
 
     db.session.delete(cti)
     db.session.commit()
 
-    return redirect('cti_tab')
-
-
-@app.route('/cti_tab', methods=['GET'])
-def cti_tab():
-    ctiList = CTI.query.order_by(CTI.timestamp.desc()).all()
-
-    return render_template('cti_tab.html', ctiList=ctiList)
+    flash("CTI deleted: {} ({})".format(cti.name, cti.id))
+    return redirect(url_for('index'))
 
 
 @app.route('/cti/<id>', methods=['GET'])
@@ -70,15 +58,17 @@ def analyse_events(id):
 
         for match in matches:
             for key in match.meta:
-                index = features.index(match.meta[key])
 
-                if features[index]:
+                try:
+                    index = features.index(match.meta[key])
+
                     event.analysed_features.append(features[index])
                     cti.features.append(features[index])
                     n_matches += 1
-                else:
-                    print("WARNING: Feature '{}' in yara file.rule '{}.{}' not found!"
-                          .format(match.meta[key], match.namespace, match.rule))
+
+                except ValueError:
+                    print("WARNING for Event=>Feature mapping: Feature '{}' specified in yara rule {} ({}) not found!"
+                          .format(match.meta[key], match.rule, match.namespace))
 
     cti.status = CTI_STATUS['ANALYSED']
     db.session.add(cti)

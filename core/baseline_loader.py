@@ -1,7 +1,6 @@
 import json
 
-from stix2 import FileSystemSource, Filter
-from stix2.utils import get_type_from_id
+from stix2 import FileSystemSource, Filter, utils
 from itertools import chain
 from core.bom.baseline import *
 from core import db
@@ -11,6 +10,7 @@ from config import Config
 class MitreKnowledgeBase:
 
     fs = FileSystemSource(Config.REPO_PATH + '/mitre/enterprise-attack')
+    relations = None
 
     @classmethod
     def __get__all_actors(cls):
@@ -33,19 +33,33 @@ class MitreKnowledgeBase:
         ))
 
     @classmethod
-    def __find_relationships(cls, source_id, rel_type):
+    def __get_mitigation_by_id(cls, id):
         filter = [
-            Filter('type', '=', 'relationship'),
-            Filter('relationship_type', '=', rel_type),
-            Filter('source_ref', '=', source_id)
+            Filter('type', '=', 'course-of-action'),
+            Filter('id', '=', id)
         ]
-
         return cls.fs.query(filter)
+
+    @classmethod
+    def __find_relationships(cls, rel_type=None, source_id=None, target_id=None):
+        if cls.relations is None:
+            cls.relations = cls.fs.query([
+                Filter('type', '=', 'relationship')
+            ])
+
+        relations = []
+        for rel in cls.relations:
+            if rel_type is None or rel_type == rel.relationship_type:
+                if source_id is None or source_id == rel.source_ref:
+                    if target_id is None or target_id == rel.target_ref:
+                        relations.append(rel)
+
+        return relations
 
     @classmethod
     def load_baseline(cls):
 
-        print("Loading baseline from MITRE. This may take some minutes...")
+        print("Loading baseline from MITRE. This may take some time...")
         for act in cls.__get__all_actors():
             actor = Actor(ext_id=act.id, name=act.name)
 
@@ -66,6 +80,10 @@ class MitreKnowledgeBase:
             if "x_mitre_platforms" in tec:
                 behaviour.platforms = json.dumps(tec['x_mitre_platforms'])
 
+            for rel in cls.__find_relationships(target_id=tec.id, rel_type='mitigates'):
+                mitigation = cls.__get_mitigation_by_id(rel.source_ref)
+                behaviour.mitigations = " ".join((str(mitigation[0].description), str(behaviour.mitigations)))
+
             db.session.add(behaviour)
 
         for sw in cls.__get_all_software():
@@ -81,9 +99,9 @@ class MitreKnowledgeBase:
             db.session.add(software)
 
         for actor in Actor.query.all():
-            print("MITRE: Setting relationships for actor {}...".format(actor.name))
+            #print("MITRE: Setting relationships for actor {}...".format(actor.name))
             for rel in cls.__find_relationships(source_id=actor.ext_id, rel_type='uses'):
-                type = get_type_from_id(rel.target_ref)
+                type = utils.get_type_from_id(rel.target_ref)
 
                 if type in ['attack-pattern']:
                     behaviour = Behaviour.query.filter_by(ext_id=rel.target_ref).first()

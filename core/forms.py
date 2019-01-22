@@ -7,6 +7,3 @@ class AddForm(FlaskForm):
     name = StringField('CTI Name: ', validators=[DataRequired()])
     submit = SubmitField('create')
 
-
-class DeleteForm(FlaskForm):
-    submit = SubmitField('delete')
