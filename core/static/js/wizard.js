@@ -31,7 +31,7 @@ $(document).ready(function () {
 
         $(this).removeClass('btn-primary');
         $(this).addClass('btn-warning');
-        $(this).text('Loading...')
+        $(this).html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...')
 
     });
 });

@@ -42,10 +42,10 @@ def delete_cti(id):
 @app.route('/cti/<id>', methods=['GET'])
 def show_cti(id):
     cti = CTI.query.get_or_404(id)
-    return render_template('cti.html', cti=cti)
+    labels = ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"]
+    return render_template('cti.html', cti=cti, labels=labels)
 
 
-# @app.route('/cti/<id>/analyse_events', methods=['POST'])
 @app.route('/cti/<id>/analyse_events')
 def analyse_events(id):
     cti = CTI.query.get_or_404(id)
@@ -77,4 +77,11 @@ def analyse_events(id):
     flash("{} CTI Event(s) analysed! Found {} distinct feature(s) in {} rule match(es)."
           .format(cti.events.__len__(), cti.features.__len__(), n_matches))
 
+    return redirect(url_for('show_cti', id=cti.id))
+
+
+@app.route('/cti/<id>/export_cti')
+def export_cti(id):
+    cti = CTI.query.get_or_404(id)
+    flash("STIX export / TAXI sharing not yet implemented!", 'error')
     return redirect(url_for('show_cti', id=cti.id))
