@@ -66,9 +66,30 @@ class HostEvent(Event):
     __mapper_args__ = {'polymorphic_identity': 'host', 'inherit_condition': (event_id == Event.id)}
 
     file = db.Column(db.String)
+    content = db.Column(db.String)
+    signature = db.Column(db.String)
 
-    def __init__(self, source_module):
-        super(HostEvent, self).__init__(source_module)
+    def __init__(self, source_module, timestamp=db.func.current_timestamp(), file=None, content=None, signature=None):
+        super(HostEvent, self).__init__(source_module, timestamp)
+        self.file = file
+        self.content = content
+        self.signature = signature
 
     def __repr__(self):
         return '<HostEvent {}>'.format(self.id)
+
+
+class GenericEvent(Event):
+    __tablename__ = 'event_generic'
+
+    event_id = db.Column(db.Integer, db.ForeignKey('event_base.id'), primary_key=True)
+    __mapper_args__ = {'polymorphic_identity': 'generic', 'inherit_condition': (event_id == Event.id)}
+
+    content = db.Column(db.String)
+
+    def __init__(self, source_module, timestamp=db.func.current_timestamp(), content=None):
+        super(GenericEvent, self).__init__(source_module, timestamp)
+        self.content = content
+
+    def __repr__(self):
+        return '<GenericEvent {}>'.format(self.id)

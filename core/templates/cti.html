@@ -48,7 +48,6 @@
         <div class="wizard">
             <div class="wizard-inner">
                 <ul class="nav nav-tabs" role="tablist">
-
                     <li role="presentation" {% if cti.status == 0 %} class="active" {% elif cti.status < 0 %} class="disabled" {% else %} class {% endif %}>
                         <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Events">
                             <span class="round-tab">
@@ -56,7 +55,6 @@
                             </span>
                         </a>
                     </li>
-
                     <li role="presentation" {% if cti.status == 1 %} class="active" {% elif cti.status < 1 %} class="disabled" {% else %} class {% endif %}>
                         <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Features">
                             <span class="round-tab">
@@ -71,7 +69,6 @@
                             </span>
                         </a>
                     </li>
-
                     <li role="presentation" {% if cti.status == 3 %} class="active" {% elif cti.status < 3 %} class="disabled" {% else %} class {% endif %}>
                         <a href="#complete" data-toggle="tab" aria-controls="complete" role="tab" title="Model">
                             <span class="round-tab">
@@ -81,131 +78,147 @@
                     </li>
                 </ul>
             </div>
-
-            <form role="form">
-                <div class="tab-content">
-                    <div class="tab-pane {% if cti.status == 0 %}active{% endif %}" role="tabpanel" id="step1">
-                        <h3>Load data</h3>
-                        <p>Number of events: {{ cti.events|length }}</p>
-
-                        <ul class="list-inline pull-right">
-                            <li><a type="button" class="btn btn-primary btn-info-full {% if cti.status <= 0 %}action{% else %}disabled{% endif %}" href="{{ url_for('analyse_events', id=cti.id) }}">Analyse events</a></li>
-                            <li><button type="button" class="btn btn-default {% if cti.status > 0 %}next-step{% else %}disabled{% endif %}">Features >></button></li>
-                        </ul>
+            <div class="tab-content">
+                <div class="tab-pane {% if cti.status == 0 %}active{% endif %}" role="tabpanel" id="step1">
+                    <h3>Load events</h3>
+                    <p>Number of events: {{ cti.events|length }}</p>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Network events from SuricataIDS</div>
+                        <div class="panel-body">
+                            <form action="{{ url_for('input.load_events', ctiId=cti.id, module='SuricataIDS') }}" method="post" class="form-inline">
+                                <div class="form-group">
+                                    <label for="path">Path:</label>
+                                    <input type="text" class="form-control" id="path">
+                                </div>
+                                <div class="form-group">
+                                    <label for="from">Date/Time from:</label>
+                                    <input type="datetime-local" class="form-control" id="from">
+                                </div>
+                                <div class="form-group">
+                                    <label for="to">Date/Time to:</label>
+                                    <input type="datetime-local" class="form-control" id="to">
+                                </div>
+                                <input class="btn btn-primary action" type="submit" value="Load events">
+                            </form>
+                        </div>
                     </div>
-                    <div class="tab-pane {% if cti.status == 1 %}active{% endif %}" role="tabpanel" id="step2">
-                        <div class="col-sm-6">
-                            <h3>Analysed behaviour(s) <span class="badge">{{ cti.features | selectattr("feat_type", "equalto", "behaviour") | list | count }}</span></h3>
-                            <table class="table table-hover">
-                                <thead>
+                    <ul class="list-inline pull-right">
+                        <li><a type="button" class="btn btn-primary btn-info-full {% if cti.status <= 0 %}action{% else %}disabled{% endif %}" href="{{ url_for('analyse_events', id=cti.id) }}">Analyse events</a></li>
+                        <li><button type="button" class="btn btn-default {% if cti.status > 0 %}next-step{% else %}disabled{% endif %}">Features >></button></li>
+                    </ul>
+                </div>
+                <div class="tab-pane {% if cti.status == 1 %}active{% endif %}" role="tabpanel" id="step2">
+                    <div class="col-sm-6">
+                        <h3>Analysed behaviour(s) <span class="badge">{{ cti.features | selectattr("feat_type", "equalto", "behaviour") | list | count }}</span></h3>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Featurename</th>
+                                    <th>Power</th>
+                                    <th>Related Events</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for feature in cti.features if feature.feat_type == 'behaviour' %}
                                     <tr>
-                                        <th>Featurename</th>
-                                        <th>Power</th>
-                                        <th>Related Events</th>
+                                        <td><a href="{{ url_for('index') }}">{{ feature.name }}</a></td>
+                                        <td>{{ feature.power }}</td>
+                                        <td>{{ feature.events | selectattr("cti.id", "equalto", cti.id) | list | count }}</td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    {% for feature in cti.features if feature.feat_type == 'behaviour' %}
-                                        <tr>
-                                            <td><a href="{{ url_for('index') }}">{{ feature.name }}</a></td>
-                                            <td>{{ feature.power }}</td>
-                                            <td>{{ feature.events | selectattr("cti.id", "equalto", cti.id) | list | count }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="col-sm-6">
-                            <h3>Analysed software <span class="badge">{{ cti.features | selectattr("feat_type", "equalto", "software") | list | count }}</span></h3>
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Featurename</th>
-                                        <th>Type</th>
-                                        <th>Power</th>
-                                        <th>Related Events</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for feature in cti.features if feature.feat_type == 'software' %}
-                                        <tr>
-                                            <td><a href="{{ url_for('index') }}">{{ feature.name }}</a></td>
-                                            <td>{{ feature.type }}</td>
-                                            <td>{{ feature.power }}</td>
-                                            <td>{{ feature.events | selectattr("cti.id", "equalto", cti.id) | list | count }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="form-group">
-                            <label for="algorithm">Algorithm</label>
-                            <select class="form-control" id="algorithm">
-                                <option>NeuronalNetwork</option>
-                                <option>DecisionTree</option>
-                            </select>
-                        </div>
-                        <ul class="list-inline pull-right">
-                            <li><button type="button" class="btn btn-default prev-step"><< Events</button></li>
-                            <li><a type="button" class="btn btn-primary btn-info-full {% if cti.status <= 1 %}action{% else %}disabled{% endif %}" href="{{ url_for('classification.classify_features', ctiId = cti.id, module='NeuronalNetwork') }}">Classify features</a></li>
-                            <li><button type="button" class="btn btn-default {% if cti.status > 1 %}next-step{% else %}disabled{% endif %}">Classification >></button></li>
-                        </ul>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="tab-pane {% if cti.status == 2 %}active{% endif %}" role="tabpanel" id="step3">
-                        {% if cti.classifications %}
-                            <div class="row">
-                                <div class="col-sm-5">
-                                    <h3>Classification <span class="label label-default">{{ cti.get_top_classification().actor.name }}</span></h3>
-                                    <p>
-                                        Top classified actor: <strong><a href="{{ url_for('index') }}">{{ cti.get_top_classification().actor.name }}</a></strong><br>
-                                        Probability: <strong>{{ (cti.get_top_classification().probability * 100) | round(1) }}%</strong><br>
-                                        Algorithm: {{ cti.get_top_classification().source_module }}
-                                    </p>
-                                    <div class="panel panel-default">
-                                        <div class="panel-body">
-                                            <canvas id="classChart" data-chart="{{ cti.get_chart_data() }}" width="100" height="100"></canvas>
-                                        </div>
-                                    </div>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">Actor details: <strong><a href="{{ url_for('index') }}">{{ cti.get_top_classification().actor.name }}</a></strong></div>
-                                        <div class="panel-body">
-                                            {{ cti.get_top_classification().actor.description }}
-                                        </div>
+                    <div class="col-sm-6">
+                        <h3>Analysed software <span class="badge">{{ cti.features | selectattr("feat_type", "equalto", "software") | list | count }}</span></h3>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Featurename</th>
+                                    <th>Type</th>
+                                    <th>Power</th>
+                                    <th>Related Events</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for feature in cti.features if feature.feat_type == 'software' %}
+                                    <tr>
+                                        <td><a href="{{ url_for('index') }}">{{ feature.name }}</a></td>
+                                        <td>{{ feature.type }}</td>
+                                        <td>{{ feature.power }}</td>
+                                        <td>{{ feature.events | selectattr("cti.id", "equalto", cti.id) | list | count }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-group">
+                        <label for="algorithm">Algorithm</label>
+                        <select class="form-control" id="algorithm">
+                            <option>NeuronalNetwork</option>
+                            <option>DecisionTree</option>
+                        </select>
+                    </div>
+                    <ul class="list-inline pull-right">
+                        <li><button type="button" class="btn btn-default prev-step"><< Events</button></li>
+                        <li><a type="button" class="btn btn-primary btn-info-full {% if cti.status <= 1 %}action{% else %}disabled{% endif %}" href="{{ url_for('classification.classify_features', ctiId = cti.id, module='NeuronalNetwork') }}">Classify features</a></li>
+                        <li><button type="button" class="btn btn-default {% if cti.status > 1 %}next-step{% else %}disabled{% endif %}">Classification >></button></li>
+                    </ul>
+                </div>
+                <div class="tab-pane {% if cti.status == 2 %}active{% endif %}" role="tabpanel" id="step3">
+                    {% if cti.classifications %}
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <h3>Classification <span class="label label-default">{{ cti.get_top_classification().actor.name }}</span></h3>
+                                <p>
+                                    Top classified actor: <strong><a href="{{ url_for('index') }}">{{ cti.get_top_classification().actor.name }}</a></strong><br>
+                                    Probability: <strong>{{ (cti.get_top_classification().probability * 100) | round(1) }}%</strong><br>
+                                    Algorithm: {{ cti.get_top_classification().source_module }}
+                                </p>
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <canvas id="classChart" data-chart="{{ cti.get_chart_data() }}" width="100" height="100"></canvas>
                                     </div>
                                 </div>
-                                <div class="col-sm-7">
-                                    <h3>Mitigations <span class="badge">{{ cti.get_top_classification().actor.uses_behaviours|length }}</span></h3>
-                                    <p>Mitigations for most likely threat actor: <strong><a href="{{ url_for('index') }}">{{ cti.get_top_classification().actor.name }}</a></strong></p>
-                                    <div class="panel-group" id="mitigations">
-                                        {% for behaviour in cti.get_top_classification().actor.uses_behaviours %}
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    <h4 class="panel-title">
-                                                        <a data-toggle="collapse" data-parent="#mitigations" href="#behaviour{{ behaviour.id }}">{{ behaviour.mitigation_name }}</a>
-                                                    </h4>
-                                                </div>
-                                                <div id="behaviour{{ behaviour.id }}" class="panel-collapse collapse {% if loop.index0 == 0 %}in{% endif %}">
-                                                    <div class="panel-body">{{ behaviour.mitigation_desc }}</div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">Actor details: <strong><a href="{{ url_for('index') }}">{{ cti.get_top_classification().actor.name }}</a></strong></div>
+                                    <div class="panel-body">
+                                        {{ cti.get_top_classification().actor.description }}
                                     </div>
                                 </div>
                             </div>
-                        {% endif %}
-                        <ul class="list-inline pull-right">
-                            <li><button type="button" class="btn btn-default prev-step"><< Features</button></li>
-                            <li><a type="button" class="btn btn-primary btn-info-full {% if cti.status <= 2 %}action{% else %}disabled{% endif %}" href="{{ url_for('export_cti', id=cti.id) }}">Export CTI</a></li>
-                            <li><button type="button" class="btn btn-default {% if cti.status > 2 %}next-step{% else %}disabled{% endif %}">Model >></button></li>
-                        </ul>
-                    </div>
-                    <div class="tab-pane {% if cti.status == 3 %}active{% endif %}" role="tabpanel" id="complete">
-                        <h3>Complete</h3>
-                        <p>You have successfully completed all steps.</p>
-                    </div>
-                    <div class="clearfix"></div>
+                            <div class="col-sm-7">
+                                <h3>Mitigations <span class="badge">{{ cti.get_top_classification().actor.uses_behaviours|length }}</span></h3>
+                                <p>Mitigations for most likely threat actor: <strong><a href="{{ url_for('index') }}">{{ cti.get_top_classification().actor.name }}</a></strong></p>
+                                <div class="panel-group" id="mitigations">
+                                    {% for behaviour in cti.get_top_classification().actor.uses_behaviours %}
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#mitigations" href="#behaviour{{ behaviour.id }}">{{ behaviour.mitigation_name }}</a>
+                                                </h4>
+                                            </div>
+                                            <div id="behaviour{{ behaviour.id }}" class="panel-collapse collapse {% if loop.index0 == 0 %}in{% endif %}">
+                                                <div class="panel-body">{{ behaviour.mitigation_desc }}</div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <ul class="list-inline pull-right">
+                        <li><button type="button" class="btn btn-default prev-step"><< Features</button></li>
+                        <li><a type="button" class="btn btn-primary btn-info-full {% if cti.status <= 2 %}action{% else %}disabled{% endif %}" href="{{ url_for('export_cti', id=cti.id) }}">Export CTI</a></li>
+                        <li><button type="button" class="btn btn-default {% if cti.status > 2 %}next-step{% else %}disabled{% endif %}">Model >></button></li>
+                    </ul>
                 </div>
-            </form>
+                <div class="tab-pane {% if cti.status == 3 %}active{% endif %}" role="tabpanel" id="complete">
+                    <h3>Complete</h3>
+                    <p>You have successfully completed all steps.</p>
+                </div>
+                <div class="clearfix"></div>
+            </div>
         </div>
         </section>
     </div>
