@@ -1,3 +1,4 @@
+import json
 from core import db
 
 CTI_STATUS = {'NEW': 0, 'ANALYSED': 1, 'CLASSIFIED': 2, 'SHARED': 3, 'ARCHIVED': 4}
@@ -29,6 +30,26 @@ class CTI(db.Model):
                 return key
 
         return None
+
+    def get_top_classification(self):
+        max_prob = 0
+        top_class = None
+
+        for classification in self.classifications:
+            if max_prob < classification.probability:
+                max_prob = classification.probability
+                top_class = classification
+
+        return top_class
+
+    def get_chart_data(self):
+        targets = []
+        probs = []
+        for classification in self.classifications:
+            targets.append(classification.actor.name)
+            probs.append(round(classification.probability * 100, 1))
+
+        return json.dumps({"labels": targets, "data": probs})
 
     def __repr__(self):
         return '<CTI {}>'.format(self.id)

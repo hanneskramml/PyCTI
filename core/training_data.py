@@ -7,6 +7,7 @@ class TrainingSet(object):
     def __init__(self):
 
         self.n_features = 0
+        self.n_targets = 0
         self.n_samples = 0
 
         self.feature_names = []
@@ -26,31 +27,37 @@ class TrainingSet(object):
         self.feature_names.append(feature_name)
         self.n_features += 1
 
-    def add_sample(self, features, target, target_name=None):
+    def add_target(self, target_name):
+        self.target_names.append(target_name)
+        self.n_targets += 1
+
+    def add_sample(self, features, target):
+        if features.__len__() != self.n_features:
+            raise AttributeError(features)
+
         self.__features.append(features)
         self.__target.append(target)
-        self.target_names.append(target_name)
         self.n_samples += 1
 
-    def add_samples(self, feature_list, targets, target_names=None):
-        if len(feature_list) != len(targets) or len(feature_list) != len(target_names):
+    def add_samples(self, feature_list, targets):
+        if len(feature_list) != len(targets):
             raise Exception
 
         for i in range(len(feature_list)):
-            self.add_sample(feature_list[i], targets[i], target_names[i])
+            self.add_sample(feature_list[i], targets[i])
 
-    def add_sample_for_features(self, features=None, target=None, target_name=None, init_values=-1):
-        feat_vector = self.get_vector_from_features(features=features, init_values=init_values)
-        self.add_sample(feat_vector, target, target_name)
+    def add_sample_for_features(self, feature_names=None, target=None, init_values=-1):
+        feat_vector = self.get_vector_for_features(feature_names=feature_names, init_values=init_values)
+        self.add_sample(feat_vector, target)
 
-    def get_vector_from_features(self, features=None, init_values=0):
+    def get_vector_for_features(self, feature_names=None, init_values=0):
         feat_vector = [init_values for x in range(self.n_features)]
 
-        if features is None:
-            features = {}
-        for key in features:
+        if feature_names is None:
+            feature_names = {}
+        for key in feature_names:
             index = self.feature_names.index(key)
-            feat_vector[index] = features[key]
+            feat_vector[index] = feature_names[key]
 
         return feat_vector
 
@@ -59,7 +66,8 @@ class TrainingSet(object):
             self.add_feature(feature.name)
 
         for actor in Actor.query.order_by(Actor.id).all():
-            self.add_sample_for_features(target=actor.id, target_name=actor.name, init_values=0)
+            self.add_target(actor.id)
+            self.add_sample_for_features(target=actor.id, init_values=0)
 
             features = {}
             for behaviour in Behaviour.query.filter(Behaviour.usedby_actors.any(id=actor.id)).all():
@@ -69,7 +77,7 @@ class TrainingSet(object):
             for software in software_rs:
                 features[software.name] = 1
 
-            self.add_sample_for_features(features=features, target=actor.id, target_name=actor.name)
+            self.add_sample_for_features(feature_names=features, target=actor.id)
 
             for key in features:
                 features[key] = 0
@@ -77,7 +85,7 @@ class TrainingSet(object):
             for software in software_rs:
                 if software.type == 'malware':
                     features[software.name] = 1
-                    self.add_sample_for_features(features=features, target=actor.id, target_name=actor.name)
+                    self.add_sample_for_features(feature_names=features, target=actor.id)
                     features[software.name] = 0
 
         print(self.get_data())

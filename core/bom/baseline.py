@@ -22,7 +22,7 @@ class Actor(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ext_id = db.Column(db.String, unique=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String, unique=True)
     alias = db.Column(db.String)
     description = db.Column(db.String)
 
@@ -94,16 +94,19 @@ class Behaviour(Feature):
     __mapper_args__ = {'polymorphic_identity': 'behaviour', 'inherit_condition': (id == Feature.id)}
 
     platforms = db.Column(db.String)
-    mitigations = db.Column(db.String)
+    mitigation_name = db.Column(db.String)
+    mitigation_desc = db.Column(db.String)
 
     uses_software = db.relationship('Software', secondary=mtm_behaviour_software, lazy=True)
     usedby_actors = db.relationship('Actor', secondary=mtm_actor_behaviour, lazy=True)
     phases = db.relationship('Phase', secondary=mtm_behaviour_phase, lazy=True)
 
-    def __init__(self, extId=None, name=None, description=None, platforms=None, mitigations=None):
+    def __init__(self, extId=None, name=None, description=None,
+                 platforms=None, mitigation_name=None, mitigation_desc=None):
         super(Behaviour, self).__init__(extId, name, description)
         self.platforms = platforms
-        self.mitigations = mitigations
+        self.mitigation_name = mitigation_name
+        self.mitigation_desc = mitigation_desc
 
     def __repr__(self):
         return '<Behaviour {}>'.format(self.id)

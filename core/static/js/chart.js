@@ -1,12 +1,13 @@
 var ctx = document.getElementById("classChart").getContext('2d');
-var labels = $('#classChart').data('labels');
+var input = $('#classChart').data('chart');
 
 var myChart = new Chart(ctx, {
-    type: 'doughnut',
+    type: 'polarArea',
     data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        labels: input.labels,
         datasets: [{
-            data: [12, 19, 3, 5, 2, 3],
+            label: 'Probability for each actor',
+            data: input.data,
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
@@ -26,5 +27,15 @@ var myChart = new Chart(ctx, {
             borderWidth: 1
         }]
     },
-    options: {}
+    options: {
+        responsive: true,
+        title: {
+            display: true,
+            text: 'Probability of classified actors'
+        },
+        legend: {
+            display: true,
+            position: 'bottom'
+        }
+    }
 });

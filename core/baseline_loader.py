@@ -82,7 +82,8 @@ class MitreKnowledgeBase:
 
             for rel in cls.__find_relationships(target_id=tec.id, rel_type='mitigates'):
                 mitigation = cls.__get_mitigation_by_id(rel.source_ref)
-                behaviour.mitigations = " ".join((str(mitigation[0].description), str(behaviour.mitigations)))
+                behaviour.mitigation_name = mitigation[0].name
+                behaviour.mitigation_desc = mitigation[0].description
 
             db.session.add(behaviour)
 

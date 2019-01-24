@@ -60,8 +60,7 @@ def archive():
 @app.route('/cti/<id>', methods=['GET'])
 def show_cti(id):
     cti = CTI.query.get_or_404(id)
-    labels = ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"]
-    return render_template('cti.html', cti=cti, labels=labels)
+    return render_template('cti.html', cti=cti)
 
 
 @app.route('/cti/<id>/analyse_events')
