@@ -6,14 +6,13 @@ from core.forms import AddForm
 
 @app.route('/', methods=['GET'])
 def index():
-    ctiList = CTI.query.order_by(CTI.timestamp.desc()).all()
+    ctiList = CTI.query.filter(CTI.status != CTI_STATUS['ARCHIVED']).order_by(CTI.id.desc()).all()
 
     # TODO: Implement dashboard view
 
     return render_template('index.html', ctiList=ctiList)
 
 
-# @app.route('/add_cti', methods=['POST'])
 @app.route('/add_cti', methods=['GET', 'POST'])
 def add_cti():
     form = AddForm()
@@ -37,6 +36,25 @@ def delete_cti(id):
 
     flash("CTI deleted: {} ({})".format(cti.name, cti.id))
     return redirect(url_for('index'))
+
+
+@app.route('/cti/<id>/archive', methods=['POST'])
+def archive_cti(id):
+    cti = CTI.query.get_or_404(id)
+
+    cti.status = CTI_STATUS['ARCHIVED']
+    db.session.add(cti)
+    db.session.commit()
+
+    flash("CTI archived: {} ({})".format(cti.name, cti.id))
+    return redirect(url_for('index'))
+
+
+@app.route('/archive', methods=['GET'])
+def archive():
+    ctiList = CTI.query.filter_by(status=CTI_STATUS['ARCHIVED']).order_by(CTI.id.desc()).all()
+
+    return render_template('archive.html', ctiList=ctiList)
 
 
 @app.route('/cti/<id>', methods=['GET'])

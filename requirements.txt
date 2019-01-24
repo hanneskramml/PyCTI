@@ -4,6 +4,7 @@ flask-bootstrap
 flask-nav
 flask-sqlalchemy
 flask-wtf
+wtforms
 idstools
 pyclamd
 yara-python

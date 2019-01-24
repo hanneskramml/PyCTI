@@ -1,6 +1,6 @@
 {%- extends "base.html" %}
 
-{% block mytitle %}Dashboard{% endblock %}
+{% block mytitle %}Archive{% endblock %}
 
 {% block jumbo %}
     <div class="jumbotron">
@@ -19,15 +19,14 @@
             <th>Timestamp</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="ctiTable">
          {% for cti in ctiList %}
             <tr onclick="window.location.href = '{{ url_for('show_cti', id=cti.id) }}';" style="cursor: pointer">
                <td>{{ cti.id }}</td>
                <td>{{ cti.name }}</td>
                <td>{{ cti.get_status_name() }}</td>
                <td>{{ cti.timestamp }}</td>
-                <td width="7cm"><form action="{{ url_for('archive_cti', id=cti.id) }}" method="post"><input class="btn btn-primary btn-xs" type="submit" value="Archive"></form></td>
-            </tr>
+           </tr>
          {% endfor %}
         </tbody>
       </table>

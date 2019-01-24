@@ -1,6 +1,6 @@
 from core import db
 
-CTI_STATUS = {'NEW': 0, 'ANALYSED': 1, 'CLASSIFIED': 2, 'SHARED': 3}
+CTI_STATUS = {'NEW': 0, 'ANALYSED': 1, 'CLASSIFIED': 2, 'SHARED': 3, 'ARCHIVED': 4}
 
 mtm_cti_feature = db.Table('mtm_cti_feature',
                               db.Column('cti_id', db.Integer, db.ForeignKey('cti.id'), primary_key=True),
