@@ -1,0 +1,15 @@
+{%- extends "base.html" %}
+
+{% block mytitle %}Features{% endblock %}
+
+{% block jumbo %}
+    <div class="jumbotron">
+      <h2>Feature <strong>{{ feat.name }}</strong></h2>
+      <h4>ID: {{ feat.id}}, Type: {{ feat.feat_type }}</h4>
+    </div>
+{% endblock %}
+{% block mycontent %}
+    <div class="container">
+      {{feat.description}}
+    </div>
+{% endblock %}

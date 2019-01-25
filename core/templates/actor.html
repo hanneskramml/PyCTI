@@ -1,0 +1,15 @@
+{%- extends "base.html" %}
+
+{% block mytitle %}Features{% endblock %}
+
+{% block jumbo %}
+    <div class="jumbotron">
+      <h2>Actor <strong>{{ act.name }}</strong></h2>
+      <h4>ID: {{ act.id}}, Alias: {{ act.alias }}</h4>
+    </div>
+{% endblock %}
+{% block mycontent %}
+    <div class="container">
+      {{act.description}}
+    </div>
+{% endblock %}

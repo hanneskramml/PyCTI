@@ -1,6 +1,6 @@
 from flask import flash, render_template, redirect, url_for
 from core import app, db, rulemanager, utils
-from core.bom import CTI, CTI_STATUS, Feature
+from core.bom import CTI, CTI_STATUS, Feature, Actor
 from core.forms import AddForm
 
 
@@ -55,6 +55,32 @@ def archive():
     ctiList = CTI.query.filter_by(status=CTI_STATUS['ARCHIVED']).order_by(CTI.id.desc()).all()
 
     return render_template('archive.html', ctiList=ctiList)
+
+
+@app.route('/features', methods=['GET'])
+def features():
+    featList = Feature.query.order_by(Feature.id.asc()).all()
+
+    return render_template('features.html', featList=featList)
+
+
+@app.route('/feature/<id>', methods=['GET'])
+def show_feat(id):
+    feat = Feature.query.get_or_404(id)
+    return render_template('feature.html', feat=feat)
+
+
+@app.route('/actors', methods=['GET'])
+def actors():
+    actList = Actor.query.order_by(Actor.id.asc()).all()
+
+    return render_template('actors.html', actList=actList)
+
+
+@app.route('/actor/<id>', methods=['GET'])
+def show_act(id):
+    act = Actor.query.get_or_404(id)
+    return render_template('actor.html', act=act)
 
 
 @app.route('/cti/<id>', methods=['GET'])

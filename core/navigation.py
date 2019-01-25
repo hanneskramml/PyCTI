@@ -8,5 +8,7 @@ def mynavbar():
         'PyCTI',
         View('Dashboard', 'index'),
         View('New', 'add_cti'),
+        View('Features', 'features'),
+        View('Actors', 'actors'),
         View('Archive', 'archive'),
     )

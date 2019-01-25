@@ -1,6 +1,6 @@
 {%- extends "base.html" %}
 
-{% block mytitle %}Dashboard{% endblock %}
+{% block mytitle %}Actors{% endblock %}
 
 {% block styles %}
     {{super()}}
@@ -15,7 +15,7 @@
     $(document).ready(function(){
       $("#mySearch").on("keyup", function() {
         var value = $(this).val().toLowerCase();
-        $("#cti_table tr").filter(function() {
+        $("#act_table tr").filter(function() {
           $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
       });
@@ -25,8 +25,8 @@
 
 {% block jumbo %}
     <div class="jumbotron">
-      <h2>Welcome to <strong>PyCTI</strong></h2>
-      <h4>A cyber threat intelligence framework</h4>
+      <h2><strong>Actors</strong></h2>
+      <h4>Overview over all Actors</h4>
     </div>
 {% endblock %}
 {% block mycontent %}
@@ -37,19 +37,16 @@
           <tr>
             <th>ID</th>
             <th>Name</th>
-            <th>Status</th>
-            <th>Timestamp</th>
+            <th>Alias</th>
           </tr>
         </thead>
-        <tbody id="cti_table">
-         {% for cti in ctiList %}
-            <tr onclick="window.location.href = '{{ url_for('show_cti', id=cti.id) }}';" style="cursor: pointer">
-               <td>{{ cti.id }}</td>
-               <td>{{ cti.name }}</td>
-               <td>{{ cti.get_status_name() }}</td>
-               <td>{{ cti.timestamp }}</td>
-                <td width="7cm"><form action="{{ url_for('archive_cti', id=cti.id) }}" method="post"><input class="btn btn-primary btn-xs" type="submit" value="Archive"></form></td>
-            </tr>
+        <tbody id="act_table">
+         {% for act in actList %}
+            <tr onclick="window.location.href = '{{ url_for('show_act', id=act.id) }}';" style="cursor: pointer">
+               <td>{{ act.id }}</td>
+               <td>{{ act.name }}</td>
+               <td>{{ act.alias }}</td>
+           </tr>
          {% endfor %}
         </tbody>
       </table>
