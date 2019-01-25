@@ -4,5 +4,5 @@ from wtforms.validators import DataRequired
 
 
 class AddForm(FlaskForm):
-    name = StringField('CTI Name: ', validators=[DataRequired()])
-    submit = SubmitField('create')
+    name = StringField('Name: ', validators=[DataRequired()], render_kw={"placeholder": "Type name here..."})
+    submit = SubmitField('Create CTI')

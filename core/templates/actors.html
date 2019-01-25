@@ -2,36 +2,21 @@
 
 {% block mytitle %}Actors{% endblock %}
 
-{% block styles %}
-    {{super()}}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-{% endblock %}
-
 {% block scripts %}
     {{super()}}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    <script>
-    $(document).ready(function(){
-      $("#mySearch").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $("#act_table tr").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-      });
-    });
-    </script>
+    <script src="{{url_for('static', filename='js/search.js')}}"></script>
 {% endblock %}
 
 {% block jumbo %}
     <div class="jumbotron">
-      <h2><strong>Actors</strong></h2>
-      <h4>Overview over all Actors</h4>
+      <h2><strong>Actors <span class="badge">{{ actList|length }}</span></strong></h2>
+      <h4>Overview of all threat actors</h4>
     </div>
 {% endblock %}
+
 {% block mycontent %}
     <div class="container">
-      <input class="form-control" id="mySearch" type="text" placeholder="Search..">
+      <input class="form-control" id="mySearch" type="text" placeholder="Search.."><br>
       <table class="table table-striped table-hover">
         <thead>
           <tr>
@@ -40,11 +25,11 @@
             <th>Alias</th>
           </tr>
         </thead>
-        <tbody id="act_table">
+        <tbody id="list_table">
          {% for act in actList %}
-            <tr onclick="window.location.href = '{{ url_for('show_act', id=act.id) }}';" style="cursor: pointer">
+            <tr onclick="window.location.href = '{{ url_for('actor_details', id=act.id) }}';" style="cursor: pointer">
                <td>{{ act.id }}</td>
-               <td>{{ act.name }}</td>
+               <td><a href="{{ url_for('actor_details', id=act.id) }}">{{ act.name }}</a></td>
                <td>{{ act.alias }}</td>
            </tr>
          {% endfor %}
