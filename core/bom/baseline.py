@@ -21,10 +21,10 @@ class Actor(db.Model):
     __tablename__ = 'actor'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    ext_id = db.Column(db.String, unique=True)
-    name = db.Column(db.String, unique=True)
-    alias = db.Column(db.String)
-    description = db.Column(db.String)
+    ext_id = db.Column(db.String(50), unique=True)
+    name = db.Column(db.String(100), unique=True)
+    alias = db.Column(db.String(255))
+    description = db.Column(db.String(10000))
 
     uses_software = db.relationship('Software', secondary=mtm_actor_software, lazy='subquery')
     uses_behaviours = db.relationship('Behaviour', secondary=mtm_actor_behaviour, lazy='subquery')
@@ -43,9 +43,9 @@ class Feature(db.Model):
     __tablename__ = 'feature'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    ext_id = db.Column(db.String, unique=True)
-    name = db.Column(db.String, unique=True, index=True)
-    description = db.Column(db.String)
+    ext_id = db.Column(db.String(50), unique=True)
+    name = db.Column(db.String(100), unique=True, index=True)
+    description = db.Column(db.String(10000))
     power = db.Column(db.Float)
 
     feat_type = db.Column(db.String)
@@ -70,9 +70,9 @@ class Software(Feature):
     id = db.Column(db.Integer, db.ForeignKey('feature.id'), primary_key=True)
     __mapper_args__ = {'polymorphic_identity': 'software', 'inherit_condition': (id == Feature.id)}
 
-    type = db.Column(db.String)
-    alias = db.Column(db.String)
-    platforms = db.Column(db.String)
+    type = db.Column(db.String(20))
+    alias = db.Column(db.String(255))
+    platforms = db.Column(db.String(255))
 
     usedby_actors = db.relationship('Actor', secondary=mtm_actor_software, lazy=True)
     usedby_behaviours = db.relationship('Behaviour', secondary=mtm_behaviour_software, lazy=True)
@@ -93,9 +93,9 @@ class Behaviour(Feature):
     id = db.Column(db.Integer, db.ForeignKey('feature.id'), primary_key=True)
     __mapper_args__ = {'polymorphic_identity': 'behaviour', 'inherit_condition': (id == Feature.id)}
 
-    platforms = db.Column(db.String)
-    mitigation_name = db.Column(db.String)
-    mitigation_desc = db.Column(db.String)
+    platforms = db.Column(db.String(255))
+    mitigation_name = db.Column(db.String(100))
+    mitigation_desc = db.Column(db.String(10000))
 
     uses_software = db.relationship('Software', secondary=mtm_behaviour_software, lazy=True)
     usedby_actors = db.relationship('Actor', secondary=mtm_actor_behaviour, lazy=True)
@@ -116,9 +116,9 @@ class Phase(db.Model):
     __tablename__ = 'phase'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    ext_id = db.Column(db.String, unique=True)
-    name = db.Column(db.String)
-    description = db.Column(db.String)
+    ext_id = db.Column(db.String(50), unique=True)
+    name = db.Column(db.String(100))
+    description = db.Column(db.String(10000))
 
     behaviours = db.relationship('Behaviour', secondary=mtm_behaviour_phase, lazy=True)
 

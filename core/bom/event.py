@@ -10,9 +10,9 @@ class Event(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     timestamp = db.Column(db.DateTime)
-    source_module = db.Column(db.String)
+    source_module = db.Column(db.String(20))
 
-    event_type = db.Column(db.String)
+    event_type = db.Column(db.String(20))
     __mapper_args__ = {'polymorphic_on': event_type}
 
     cti = db.relationship("CTI", uselist=False, lazy=True)
@@ -35,14 +35,14 @@ class NetworkEvent(Event):
     event_id = db.Column(db.Integer, db.ForeignKey('event_base.id'), primary_key=True)
     __mapper_args__ = {'polymorphic_identity': 'network', 'inherit_condition': (event_id == Event.id)}
 
-    src_ip = db.Column(db.String)
-    dest_ip = db.Column(db.String)
-    protocol = db.Column(db.String)
+    src_ip = db.Column(db.String(255))
+    dest_ip = db.Column(db.String(255))
+    protocol = db.Column(db.String(255))
     src_port = db.Column(db.Integer)
     dest_port = db.Column(db.Integer)
-    payload = db.Column(db.String)
-    signature = db.Column(db.String)
-    reference = db.Column(db.String)
+    payload = db.Column(db.String(10000))
+    signature = db.Column(db.String(255))
+    reference = db.Column(db.String(1000))
 
     def __init__(self, source_module, timestamp=db.func.current_timestamp(), src_ip=None, dest_ip=None, protocol=None, src_port=None, dest_port=None, payload=None, signature=None, reference=None):
         super(NetworkEvent, self).__init__(source_module, timestamp)
@@ -65,9 +65,9 @@ class HostEvent(Event):
     event_id = db.Column(db.Integer, db.ForeignKey('event_base.id'), primary_key=True)
     __mapper_args__ = {'polymorphic_identity': 'host', 'inherit_condition': (event_id == Event.id)}
 
-    file = db.Column(db.String)
-    content = db.Column(db.String)
-    signature = db.Column(db.String)
+    file = db.Column(db.String(100))
+    content = db.Column(db.String(10000))
+    signature = db.Column(db.String(255))
 
     def __init__(self, source_module, timestamp=db.func.current_timestamp(), file=None, content=None, signature=None):
         super(HostEvent, self).__init__(source_module, timestamp)
@@ -85,7 +85,7 @@ class GenericEvent(Event):
     event_id = db.Column(db.Integer, db.ForeignKey('event_base.id'), primary_key=True)
     __mapper_args__ = {'polymorphic_identity': 'generic', 'inherit_condition': (event_id == Event.id)}
 
-    content = db.Column(db.String)
+    content = db.Column(db.String(10000))
 
     def __init__(self, source_module, timestamp=db.func.current_timestamp(), content=None):
         super(GenericEvent, self).__init__(source_module, timestamp)

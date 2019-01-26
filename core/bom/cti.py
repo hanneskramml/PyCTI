@@ -12,7 +12,7 @@ class CTI(db.Model):
     __tablename__ = 'cti'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String(100))
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
     status = db.Column(db.Integer)
 
@@ -60,7 +60,7 @@ class Classification(db.Model):
 
     cti_id = db.Column(db.Integer, db.ForeignKey('cti.id'), nullable=False, primary_key=True)
     actor_id = db.Column(db.Integer, db.ForeignKey('actor.id'), nullable=False, primary_key=True)
-    source_module = db.Column(db.String, primary_key=True)
+    source_module = db.Column(db.String(20), primary_key=True)
     probability = db.Column(db.Float)
 
     cti = db.relationship("CTI", uselist=False)
