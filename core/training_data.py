@@ -88,9 +88,7 @@ class TrainingSet(object):
                     self.add_sample_for_features(feature_names=features, target=actor.id)
                     features[software.name] = 0
 
-        print(self.get_data())
-        print("Number of features: {}".format(self.n_features))
-        print("Number of training samples: {}".format(self.n_samples))
+        print("TrainingSet generated (Features: {}, Samples: {})".format(self.n_features, self.n_samples))
 
     def get_data(self):
         return {'features': self.features, 'feature_names': self.feature_names,
