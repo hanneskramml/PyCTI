@@ -21,8 +21,8 @@ class Actor(db.Model):
     __tablename__ = 'actor'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    ext_id = db.Column(db.String(50), unique=True)
-    name = db.Column(db.String(100), unique=True)
+    ext_id = db.Column(db.String(100), unique=True)
+    name = db.Column(db.String(255), unique=True)
     alias = db.Column(db.String(255))
     description = db.Column(db.String(10000))
 
@@ -43,12 +43,12 @@ class Feature(db.Model):
     __tablename__ = 'feature'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    ext_id = db.Column(db.String(50), unique=True)
-    name = db.Column(db.String(100), unique=True, index=True)
+    ext_id = db.Column(db.String(100), unique=True)
+    name = db.Column(db.String(255), unique=True, index=True)
     description = db.Column(db.String(10000))
     power = db.Column(db.Float)
 
-    feat_type = db.Column(db.String)
+    feat_type = db.Column(db.String(20))
     __mapper_args__ = {'polymorphic_on': feat_type}
 
     def __init__(self, extId=None, name=None, description=None, power=1):
@@ -94,7 +94,7 @@ class Behaviour(Feature):
     __mapper_args__ = {'polymorphic_identity': 'behaviour', 'inherit_condition': (id == Feature.id)}
 
     platforms = db.Column(db.String(255))
-    mitigation_name = db.Column(db.String(100))
+    mitigation_name = db.Column(db.String(255))
     mitigation_desc = db.Column(db.String(10000))
 
     uses_software = db.relationship('Software', secondary=mtm_behaviour_software, lazy=True)
@@ -116,8 +116,8 @@ class Phase(db.Model):
     __tablename__ = 'phase'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    ext_id = db.Column(db.String(50), unique=True)
-    name = db.Column(db.String(100))
+    ext_id = db.Column(db.String(100), unique=True)
+    name = db.Column(db.String(255))
     description = db.Column(db.String(10000))
 
     behaviours = db.relationship('Behaviour', secondary=mtm_behaviour_phase, lazy=True)

@@ -106,10 +106,12 @@ class MitreKnowledgeBase:
 
                 if type in ['attack-pattern']:
                     behaviour = Behaviour.query.filter_by(ext_id=rel.target_ref).first()
-                    actor.uses_behaviours.append(behaviour)
+                    if behaviour:
+                        actor.uses_behaviours.append(behaviour)
                 elif type in ['malware', 'tool']:
                     software = Software.query.filter_by(ext_id=rel.target_ref).first()
-                    actor.uses_software.append(software)
+                    if software:
+                        actor.uses_software.append(software)
 
             db.session.add(actor)
 

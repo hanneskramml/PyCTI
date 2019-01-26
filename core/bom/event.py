@@ -65,7 +65,7 @@ class HostEvent(Event):
     event_id = db.Column(db.Integer, db.ForeignKey('event_base.id'), primary_key=True)
     __mapper_args__ = {'polymorphic_identity': 'host', 'inherit_condition': (event_id == Event.id)}
 
-    file = db.Column(db.String(100))
+    file = db.Column(db.String(255))
     content = db.Column(db.String(10000))
     signature = db.Column(db.String(255))
 

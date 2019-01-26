@@ -12,7 +12,7 @@ class CTI(db.Model):
     __tablename__ = 'cti'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(255))
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
     status = db.Column(db.Integer)
 
