@@ -6,7 +6,7 @@ from .decision_tree import DecisionTree
 from .neuronal_network import NeuronalNetwork
 
 
-@bp.route('/<module>/<ctiId>')
+@bp.route('/<module>/<ctiId>', methods=['POST'])
 def classify_features(module, ctiId):
     cti = CTI.query.filter_by(id=ctiId).first_or_404()
 

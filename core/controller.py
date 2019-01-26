@@ -1,7 +1,7 @@
 from flask import flash, render_template, redirect, url_for
 from core import app, db, rulemanager, utils
 from core.bom import CTI, CTI_STATUS, Feature, Actor
-from core.forms import AddForm
+from core.forms import AddForm, EventsForm
 
 
 @app.route('/', methods=['GET'])
@@ -34,10 +34,11 @@ def ctis():
 @app.route('/cti/<id>', methods=['GET'])
 def show_cti(id):
     cti = CTI.query.get_or_404(id)
-    return render_template('cti.html', cti=cti)
+    events_form = EventsForm()
+    return render_template('cti.html', cti=cti, eventsForm=events_form)
 
 
-@app.route('/cti/<id>/analyse_events')
+@app.route('/cti/<id>/analyse_events', methods=['POST'])
 def analyse_events(id):
     cti = CTI.query.get_or_404(id)
     features = Feature.query.all()
@@ -71,7 +72,7 @@ def analyse_events(id):
     return redirect(url_for('show_cti', id=cti.id))
 
 
-@app.route('/cti/<id>/export_cti')
+@app.route('/cti/<id>/export_cti', methods=['POST'])
 def export_cti(id):
     cti = CTI.query.get_or_404(id)
     flash("STIX export / TAXI sharing not yet implemented!", 'error')

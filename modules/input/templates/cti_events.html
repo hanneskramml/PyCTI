@@ -1,0 +1,29 @@
+<h3>Events <span class="badge">{{ cti.events|length }}</span></h3>
+<p>
+    Number of NetworkEvents: {{ cti.events | selectattr("event_type", "equalto", "network") | list | count }}<br>
+    Number of HostEvents: {{ cti.events | selectattr("event_type", "equalto", "host") | list | count }}<br>
+    Number of GenericEvents: {{ cti.events | selectattr("event_type", "equalto", "generic") | list | count }}
+</p><br>
+<div class="panel panel-default">
+    <div class="panel-heading">Network events from <strong>SuricataIDS</strong> <span class="badge">{{ cti.events | selectattr("source_module", "equalto", "SuricataIDS") | list | count }}</span></div>
+    <div class="panel-body">
+        <form class="form form-inline" action="{{ url_for('input.load_events', ctiId=cti.id, module='SuricataIDS') }}" method="post" role="form">
+            {{ eventsForm.hidden_tag() }}
+            {{ wtf.form_field(eventsForm.path) }}
+            {{ wtf.form_field(eventsForm.file) }}
+            {{ wtf.form_field(eventsForm.time) }}
+            <button type="submit" class="btn btn-primary btn-info-full {% if cti.status <= 0 %}action{% else %}disabled{% endif %}" {% if cti.status > 0 %}disabled{% endif %}>Load events</button>
+        </form>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">Host events from <strong>generic log file</strong> <span class="badge">{{ cti.events | selectattr("source_module", "equalto", "GenericLogFile") | list | count }}</span></div>
+    <div class="panel-body">
+        <form class="form form-inline" action="{{ url_for('input.load_events', ctiId=cti.id, module='GenericLogFile') }}" method="post" role="form">
+            {{ eventsForm.hidden_tag() }}
+            {{ wtf.form_field(eventsForm.path) }}
+            {{ wtf.form_field(eventsForm.file) }}
+            <button type="submit" class="btn btn-primary btn-info-full {% if cti.status <= 0 %}action{% else %}disabled{% endif %}" {% if cti.status > 0 %}disabled{% endif %}>Load events</button>
+        </form>
+    </div>
+</div>
