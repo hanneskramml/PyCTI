@@ -22,7 +22,7 @@ class Actor(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ext_id = db.Column(db.String(100), unique=True)
-    name = db.Column(db.String(255), unique=True)
+    name = db.Column(db.String(100), unique=True)
     alias = db.Column(db.String(255))
     description = db.Column(db.String(10000))
 
@@ -44,7 +44,7 @@ class Feature(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ext_id = db.Column(db.String(100), unique=True)
-    name = db.Column(db.String(255), unique=True, index=True)
+    name = db.Column(db.String(100), unique=True, index=True)
     description = db.Column(db.String(10000))
     power = db.Column(db.Float)
 
@@ -117,7 +117,7 @@ class Phase(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ext_id = db.Column(db.String(100), unique=True)
-    name = db.Column(db.String(255))
+    name = db.Column(db.String(100))
     description = db.Column(db.String(10000))
 
     behaviours = db.relationship('Behaviour', secondary=mtm_behaviour_phase, lazy=True)
