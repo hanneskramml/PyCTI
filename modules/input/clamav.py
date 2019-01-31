@@ -31,7 +31,7 @@ class ClamAV(InputModule):
         events = []
         try:
             clam = clamd.ClamdUnixSocket()
-            files = clam.scan(path)
+            files = clam.multiscan(path)
             for file in files:
                 result = files[file][0]
                 msg = files[file][1]
@@ -41,13 +41,13 @@ class ClamAV(InputModule):
                     event.file = file
                     event.signature = msg
                     events.append(event)
-                    flash("Found {} in file {}".format(msg, file))
+                    flash("Found {} in file {}!".format(msg, file), "warning")
 
                 elif result == 'ERROR':
-                    flash("Error in file {}: {}".format(file, msg))
+                    flash("Error in file {}: {}".format(file, msg), "error")
 
                 elif result == 'OK':
-                    flash("Nothing found in path/file: {}".format(file))
+                    flash("Nothing found in path/file: {}".format(file), "success")
 
                 else:
                     print("ClamAV: unhandled result in file {}: {}, Msg: {}".format(file, result, msg))
