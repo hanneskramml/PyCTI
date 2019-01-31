@@ -9,21 +9,30 @@
     <div class="panel-body">
         <form class="form form-inline" action="{{ url_for('input.load_events', ctiId=cti.id, module='SuricataIDS') }}" method="post" role="form">
             {{ eventsForm.hidden_tag() }}
-            {{ wtf.form_field(eventsForm.path) }}
-            {{ wtf.form_field(eventsForm.file) }}
-            {{ wtf.form_field(eventsForm.time) }}
+            {{ wtf.form_field(eventsForm.host) }}
+            {{ wtf.form_field(eventsForm.db) }}
+            {{ wtf.form_field(eventsForm.limit) }}
             <button type="submit" class="btn btn-primary btn-info-full {% if cti.status <= 0 %}action{% else %}disabled{% endif %}" {% if cti.status > 0 %}disabled{% endif %}>Load events</button>
         </form>
     </div>
 </div>
 <div class="panel panel-default">
-    <div class="panel-heading">Host events from <strong>generic log file</strong> <span class="badge">{{ cti.events | selectattr("source_module", "equalto", "GenericLogFile") | list | count }}</span></div>
+    <div class="panel-heading">Host events from <strong>ClamAV</strong> <span class="badge">{{ cti.events | selectattr("source_module", "equalto", "ClamAV") | list | count }}</span></div>
     <div class="panel-body">
-        <form class="form form-inline" action="{{ url_for('input.load_events', ctiId=cti.id, module='GenericLogFile') }}" method="post" role="form">
+        <form class="form form-inline" action="{{ url_for('input.load_events', ctiId=cti.id, module='ClamAV') }}" method="post" role="form">
             {{ eventsForm.hidden_tag() }}
             {{ wtf.form_field(eventsForm.path) }}
+            <button type="submit" class="btn btn-primary btn-info-full {% if cti.status <= 0 %}action{% else %}disabled{% endif %}" {% if cti.status > 0 %}disabled{% endif %}>Run Scan</button>
+        </form>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">Generic events from <strong>GenericLogFile</strong> <span class="badge">{{ cti.events | selectattr("source_module", "equalto", "GenericLogFile") | list | count }}</span></div>
+    <div class="panel-body">
+        <form class="form form-inline" action="{{ url_for('input.load_events', ctiId=cti.id, module='GenericLogFile') }}" method="post" enctype="multipart/form-data" role="form">
+            {{ eventsForm.hidden_tag() }}
             {{ wtf.form_field(eventsForm.file) }}
-            <button type="submit" class="btn btn-primary btn-info-full {% if cti.status <= 0 %}action{% else %}disabled{% endif %}" {% if cti.status > 0 %}disabled{% endif %}>Load events</button>
+            <button type="submit" class="btn btn-primary btn-info-full {% if cti.status <= 0 %}action{% else %}disabled{% endif %}" {% if cti.status > 0 %}disabled{% endif %}>Upload and Import</button>
         </form>
     </div>
 </div>

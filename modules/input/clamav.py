@@ -1,4 +1,7 @@
-import pyclamd
+import clamd, traceback
+from flask import flash
+
+from core.bom import HostEvent
 from modules.input import InputModule
 
 
@@ -7,33 +10,49 @@ class ClamAV(InputModule):
     CONFIG = {
         'MODULE_NAME': "ClamAV",
         'DEFAULT_ON_ACCESS_SCAN_LOG': "/var/log/clamav/infected.log",
-        'DEFAULT_SCAN_PATH': "/home"
+        'DEFAULT_SCAN_PATH': "/home/pycti/test",
     }
-
-    clam = None
-
-    @classmethod
-    def connect(cls):
-        try:
-            cls.clam = pyclamd.ClamdUnixSocket()
-            cls.clam.ping()
-        except pyclamd.ConnectionError:
-            # if failed, test for network socket
-            try:
-                cls.clam = pyclamd.ClamdNetworkSocket()
-                cls.clam.ping()
-            except pyclamd.ConnectionError:
-                raise ValueError('Unable not connect to ClamdAV server either by unix or network socket')
 
     @classmethod
     def load_data(cls, path=CONFIG['DEFAULT_ON_ACCESS_SCAN_LOG']):
         # TODO: implement on access scan detection
-        return
+        return None
 
     @classmethod
-    def run_scan(cls, path=CONFIG['DEFAULT_SCAN_PATH']):
-        return
+    def run_scan(cls, path=None):
 
+        if path is None:
+            path = cls.CONFIG.get('DEFAULT_SCAN_PATH')
 
-ClamAV.connect()
-print("Connection to ClamAV server established")
+        if not path.startswith(cls.CONFIG.get('DEFAULT_SCAN_PATH')):
+            flash("Due to security reasons, the path must start with {}".format(cls.CONFIG.get('DEFAULT_SCAN_PATH')), "error")
+            return []
+
+        events = []
+        try:
+            clam = clamd.ClamdUnixSocket()
+            files = clam.scan(path)
+            for file in files:
+                result = files[file][0]
+                msg = files[file][1]
+
+                if result == 'FOUND':
+                    event = HostEvent(cls.__name__)
+                    event.file = file
+                    event.signature = msg
+                    events.append(event)
+                    flash("Found {} in file {}".format(msg, file))
+
+                elif result == 'ERROR':
+                    flash("Error in file {}: {}".format(file, msg))
+
+                elif result == 'OK':
+                    flash("Nothing found in path/file: {}".format(file))
+
+                else:
+                    print("ClamAV: unhandled result in file {}: {}, Msg: {}".format(file, result, msg))
+
+        except Exception:
+            flash(traceback.format_exc(0), "error")
+
+        return events

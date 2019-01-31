@@ -9,10 +9,10 @@ from modules.input import InputModule
 class SuricataIDS(InputModule):
 
     CONFIG = {
-        'DEFAULT_LOG_PATH': "/Users/Hannes/git/PyCTI/modules/input/unified",
+        'DEFAULT_LOG_PATH': "/var/log/suricata",
         'DEFAULT_LOG_FILE': "unified2.alert",
-        'GEN_MAP_PATH': "/Users/Hannes/git/PyCTI/modules/input/gen-msg.map",
-        'SIG_MAP_PATH': "/Users/Hannes/git/PyCTI/modules/input/sid-msg.map"
+        'GEN_MAP_PATH': "/etc/suricata/rules/gen-msg.map",
+        'SIG_MAP_PATH': "/etc/suricata/rules/sid-msg.map"
     }
 
     @classmethod
@@ -24,14 +24,13 @@ class SuricataIDS(InputModule):
         if file is None:
             file = cls.CONFIG['DEFAULT_LOG_FILE']
 
-        sigmap = maps.SignatureMap()
-        sigmap.load_generator_map(open(cls.CONFIG.get('GEN_MAP_PATH')))
-        sigmap.load_signature_map(open(cls.CONFIG.get('SIG_MAP_PATH')))
-
         events = []
 
         try:
-            #reader = unified2.FileRecordReader("/Users/Hannes/git/PyCTI/modules/input/unified2.alert")
+            sigmap = maps.SignatureMap()
+            sigmap.load_generator_map(open(cls.CONFIG.get('GEN_MAP_PATH')))
+            sigmap.load_signature_map(open(cls.CONFIG.get('SIG_MAP_PATH')))
+
             reader = unified2.SpoolRecordReader(path, file, follow=False)
 
             for record in reader:

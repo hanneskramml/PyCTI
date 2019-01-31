@@ -8,7 +8,7 @@ bp = Blueprint('input', __name__, template_folder = templates_folder)
 class InputModule(object):
 
     @classmethod
-    def get_events(cls, path, file):
+    def get_events(cls, generic):
         raise NotImplementedError
 
     @classmethod

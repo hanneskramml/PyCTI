@@ -1,39 +1,39 @@
-import os
+import traceback
 from flask import flash
+
 from modules.input import InputModule
-from core.bom import HostEvent
+from core.bom import GenericEvent
 
 
 class GenericLogFile(InputModule):
 
     CONFIG = {
-        'DEFAULT_LOG_PATH': "/var/log/",
-        'DEFAULT_LOG_FILE': "event.log"
+        'ALLOWED_EXTENSIONS': {'log', 'txt'}
     }
 
     @classmethod
-    def get_events(cls, path=None, file=None):
-
-        if path is None:
-            path = cls.CONFIG['DEFAULT_LOG_PATH']
+    def get_events(cls, file=None):
 
         if file is None:
-            file = cls.CONFIG['DEFAULT_LOG_FILE']
+            return []
+
+        if '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() not in cls.CONFIG.get("ALLOWED_EXTENSIONS"):
+            flash("Allowed file extensions: {}".format(cls.CONFIG.get("ALLOWED_EXTENSIONS")), "error")
+            return []
 
         events = []
-
         try:
-            file = open(os.path.join(path, file), "r")
-
             for line in file:
-                event = HostEvent(cls.__name__)
-                event.file = path
+                if len(line.strip()) == 0:
+                    continue
+
+                event = GenericEvent(cls.__name__)
                 event.content = line
                 events.append(event)
 
             file.close()
 
-        except Exception as e:
-            flash(e.__class__.__name__, "error")
+        except Exception:
+            flash(traceback.format_exc(0), "error")
 
         return events

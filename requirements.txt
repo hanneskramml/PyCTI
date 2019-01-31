@@ -6,8 +6,9 @@ flask-sqlalchemy
 flask-wtf
 wtforms
 idstools
-pyclamd
+clamd
 yara-python
 stix2
 scikit-learn
 numpy
+mysql-connector
