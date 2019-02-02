@@ -75,7 +75,7 @@ def analyse_events(id):
 @app.route('/cti/<id>/export_cti', methods=['POST'])
 def export_cti(id):
     cti = CTI.query.get_or_404(id)
-    flash("STIX export / TAXI sharing not yet implemented!", 'error')
+    flash("STIX export / TAXII sharing not yet implemented!", 'error')
     return redirect(url_for('show_cti', id=cti.id))
 
 
