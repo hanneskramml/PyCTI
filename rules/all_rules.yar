@@ -1,11 +1,9 @@
-rule ConductActiveScanning
+rule ConductActiveScanning : Turla
 {
     meta:
         feat1 = "Conduct active scanning"
 
     strings:
-        $s1 = /ipconfig/ nocase
-        $s2 = /ifconfig/ nocase
         $s3 = /Scan/ nocase
         $s4 = "SSH Scan" nocase
         $s5 = /nmap/ nocase
@@ -22,10 +20,8 @@ rule CommandLineInterface : APT1 APT28
         feat1 = "Command-Line Interface"
 
     strings:
-        $s1 = /Scan/ nocase
-        $s2 = "SSH Scan" nocase
-        $s3 = /cmd.exe/ nocase
-        $s4 = /rundll32.exe/ nocase
+        $s1 = /cmd.exe/ nocase
+        $s2 = /rundll32.exe/ nocase
 
     condition:
         any of them
@@ -119,9 +115,10 @@ rule SystemNetworkConfigurationDiscovery : TURLA
         $s1 = /ipconfig/ nocase
         $s2 = /ifconfig/ nocase
         $s3 = /arp/ nocase
-        $s4 = /nbtstat/ nocase
-        $s5 = /net/ nocase
-        $s6 = /route/ nocase
+        $s4 = /netstat/ nocase
+        $s5 = /net route/ nocase
+        $s6 = /net use/ nocase
+        $s7 = /net group/ nocase
 
     condition:
         any of them
