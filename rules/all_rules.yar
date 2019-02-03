@@ -1,20 +1,3 @@
-rule SystemNetworkConfigurationDiscovery
-{
-    meta:
-        feat1 = "System Network Configuration Discovery"
-
-    strings:
-        $s1 = /ipconfig/ nocase
-        $s2 = /ifconfig/ nocase
-        $s3 = /arp/ nocase
-        $s4 = /nbtstat/ nocase
-        $s5 = /net/ nocase
-        $s6 = /route/ nocase
-
-    condition:
-        any of them
-}
-
 rule ConductActiveScanning
 {
     meta:
@@ -33,7 +16,22 @@ rule ConductActiveScanning
         any of them
 }
 
-rule CredentialDumping
+rule CommandLineInterface : APT1 APT28
+{
+    meta:
+        feat1 = "Command-Line Interface"
+
+    strings:
+        $s1 = /Scan/ nocase
+        $s2 = "SSH Scan" nocase
+        $s3 = /cmd.exe/ nocase
+        $s4 = /rundll32.exe/ nocase
+
+    condition:
+        any of them
+}
+
+rule CredentialDumping : TURLA APT1 APT28
 {
     meta:
         feat1 = "Credential Dumping"
@@ -51,7 +49,7 @@ rule CredentialDumping
         any of them
 }
 
-rule DataCompressed
+rule DataCompressed : APT1 APT28
 {
     meta:
         feat1 = "Data Compressed"
@@ -65,7 +63,7 @@ rule DataCompressed
         any of them
 }
 
-rule DataFromLocalSystem
+rule DataFromLocalSystem : APT1 APT28
 {
     meta:
         feat1 = "Data from Local System"
@@ -78,7 +76,7 @@ rule DataFromLocalSystem
         any of them
 }
 
-rule EmailCollection
+rule EmailCollection : APT1 APT28
 {
     meta:
         feat1 = "Email Collection"
@@ -95,7 +93,7 @@ rule EmailCollection
         any of them
 }
 
-rule Scripting
+rule Scripting : APT1 APT28 APT29
 {
     meta:
         feat1 = "Scripting"
@@ -112,7 +110,26 @@ rule Scripting
         any of them
 }
 
-rule SpearphishingLink
+rule SystemNetworkConfigurationDiscovery : TURLA
+{
+    meta:
+        feat1 = "System Network Configuration Discovery"
+
+    strings:
+        $s1 = /ipconfig/ nocase
+        $s2 = /ifconfig/ nocase
+        $s3 = /arp/ nocase
+        $s4 = /nbtstat/ nocase
+        $s5 = /net/ nocase
+        $s6 = /route/ nocase
+
+    condition:
+        any of them
+}
+
+
+
+rule SpearphishingLink : TURLA APT1 APT28 APT29
 {
     meta:
         feat1 = "Spearphishing Link"
@@ -124,7 +141,7 @@ rule SpearphishingLink
         any of them
 }
 
-rule UserExecution
+rule UserExecution : TURLA APT28 APT29
 {
     meta:
         feat1 = "User Execution"
@@ -136,7 +153,7 @@ rule UserExecution
         any of them
 }
 
-rule PowerShell
+rule PowerShell : TURLA APT28 APT29
 {
     meta:
         feat1 = "Power Shell"
@@ -149,15 +166,13 @@ rule PowerShell
         any of them
 }
 
-rule StandardApplicationLayerProtocol
+rule ProcessDiscovery : TURLA APT28
 {
     meta:
-        feat1 = "Standard Application Layer Protocol"
+        feat1 = "Process Discovery"
 
     strings:
-        $s1 = "HTTP" nocase
-        $s2 = "HTTPS" nocase
-        $s3 = "SMTP" nocase
+        $s1 = "tasklist" nocase
 
     condition:
         any of them
