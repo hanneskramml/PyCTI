@@ -7,8 +7,6 @@ rule ConductActiveScanning : Turla
         $s3 = /Scan/ nocase
         $s4 = "SSH Scan" nocase
         $s5 = /nmap/ nocase
-        $s6 = /net start/ nocase
-        $s7 = /route/ nocase
 
     condition:
         any of them
@@ -78,8 +76,6 @@ rule EmailCollection : APT1 APT28
         feat1 = "Email Collection"
 
     strings:
-        $s1 = /.pst/ nocase
-        $s2 = /.ost/ nocase
         $s3 = /findstr/ nocase
         $s4 = "MailSniper" nocase
         $s5 = "GETMAIL" nocase
@@ -116,9 +112,9 @@ rule SystemNetworkConfigurationDiscovery : TURLA
         $s2 = /ifconfig/ nocase
         $s3 = /arp/ nocase
         $s4 = /netstat/ nocase
-        $s5 = /net route/ nocase
-        $s6 = /net use/ nocase
-        $s7 = /net group/ nocase
+        $s5 = /net use/ nocase
+        $s6 = /net group/ nocase
+        $s7 = "route" nocase
 
     condition:
         any of them
